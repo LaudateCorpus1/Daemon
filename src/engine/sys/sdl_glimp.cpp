@@ -1494,25 +1494,67 @@ success:
 
 	Q_strncpyz( glConfig.version_string, ( char * ) glGetString( GL_VERSION ), sizeof( glConfig.version_string ) );
 
+	glConfig2.glExtensionsString[ 0 ] = '\0';
+
 	if ( glConfig.driverType == glDriverType_t::GLDRV_OPENGL3 )
 	{
 		GLint numExts, i;
 
 		glGetIntegerv( GL_NUM_EXTENSIONS, &numExts );
 
-		glConfig.extensions_string[ 0 ] = '\0';
+		logger.Debug( "Found %d OpenGL extensions.", numExts );
+
+		std::string glExtensionsString = "";
+
 		for ( i = 0; i < numExts; ++i )
 		{
-			if ( i != 0 )
+			char* s = ( char * ) glGetStringi( GL_EXTENSIONS, i );
+
+			/* Check for errors when fetching string.
+
+			> If an error is generated, glGetString returns 0. 
+			> -- https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glGetString.xhtml */
+			if ( s == nullptr )
 			{
-				Q_strcat( glConfig.extensions_string, sizeof( glConfig.extensions_string ), ( char * ) " " );
+				logger.Warn( "Error when fetching OpenGL extension list." );
 			}
-			Q_strcat( glConfig.extensions_string, sizeof( glConfig.extensions_string ), ( char * ) glGetStringi( GL_EXTENSIONS, i ) );
+			else
+			{
+				std::string extensionName = s;
+
+				if ( i != 0 )
+				{
+					glExtensionsString += " ";
+				}
+
+				glExtensionsString += extensionName;
+			}
 		}
+
+		logger.Debug( "OpenGL extensions found: %s", glExtensionsString.c_str() );
+
+		Q_strncpyz( glConfig2.glExtensionsString, glExtensionsString.c_str(), sizeof( glConfig2.glExtensionsString ) );
 	}
 	else
 	{
-		Q_strncpyz( glConfig.extensions_string, ( char * ) glGetString( GL_EXTENSIONS ), sizeof( glConfig.extensions_string ) );
+		char* s = ( char * ) glGetString( GL_EXTENSIONS );
+
+		if ( s == nullptr )
+		{
+			logger.Warn( "Error when fetching OpenGL extension list." );
+		}
+		else
+		{
+			std::string glExtensionsString = ( char * ) glGetString( GL_EXTENSIONS );
+
+			int numExts = std::count(glExtensionsString.begin(), glExtensionsString.end(), ' ');
+
+			logger.Debug( "Found %d OpenGL extensions.", numExts );
+
+			logger.Debug( "OpenGL extensions found: %s", glExtensionsString.c_str() );
+
+			Q_strncpyz( glConfig2.glExtensionsString, glExtensionsString.c_str(), sizeof( glConfig2.glExtensionsString ) );
+		}
 	}
 
 	if ( Q_stristr( glConfig.renderer_string, "amd " ) ||

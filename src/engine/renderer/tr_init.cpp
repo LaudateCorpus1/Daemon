@@ -907,7 +907,7 @@ ScreenshotCmd screenshotPNGRegistration("screenshotPNG", ssFormat_t::SSF_PNG, "p
 		Log::Notice("GL_VENDOR: %s", glConfig.vendor_string );
 		Log::Notice("GL_RENDERER: %s", glConfig.renderer_string );
 		Log::Notice("GL_VERSION: %s", glConfig.version_string );
-		Log::Debug("GL_EXTENSIONS: %s", glConfig.extensions_string );
+		Log::Debug("GL_EXTENSIONS: %s", glConfig2.glExtensionsString );
 		Log::Debug("GL_MAX_TEXTURE_SIZE: %d", glConfig.maxTextureSize );
 
 		Log::Notice("GL_SHADING_LANGUAGE_VERSION: %s", glConfig2.shadingLanguageVersionString );

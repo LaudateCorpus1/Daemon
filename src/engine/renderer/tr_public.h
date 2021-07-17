@@ -46,6 +46,8 @@ struct glconfig2_t
 
 	bool glCoreProfile;
 
+	char glExtensionsString[ MAX_STRING_CHARS * 8 ];
+
 	int      maxCubeMapTextureSize;
 
 	bool occlusionQueryAvailable;
