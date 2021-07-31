@@ -963,14 +963,12 @@ ScreenshotCmd screenshotPNGRegistration("screenshotPNG", ssFormat_t::SSF_PNG, "p
 
 		if ( glConfig.driverType == glDriverType_t::GLDRV_OPENGL3 )
 		{
-			int contextFlags, profile;
+			int contextFlags;
 
 			Log::Notice("%sUsing OpenGL 3.x context", Color::ToString( Color::Green ) );
 
 			// check if we have a core-profile
-			glGetIntegerv( GL_CONTEXT_PROFILE_MASK, &profile );
-
-			if ( profile == GL_CONTEXT_CORE_PROFILE_BIT )
+			if ( glConfig2.glCoreProfile )
 			{
 				Log::Notice("%sHaving a core profile", Color::ToString( Color::Green ) );
 			}
@@ -982,7 +980,7 @@ ScreenshotCmd screenshotPNGRegistration("screenshotPNG", ssFormat_t::SSF_PNG, "p
 			// check if context is forward compatible
 			glGetIntegerv( GL_CONTEXT_FLAGS, &contextFlags );
 
-			if ( contextFlags & GL_CONTEXT_FLAG_FORWARD_COMPATIBLE_BIT )
+			if ( glConfig2.glForwardCompatibleContext )
 			{
 				Log::Debug("%sContext is forward compatible", Color::ToString( Color::Green ) );
 			}

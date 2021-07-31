@@ -941,7 +941,35 @@ static rserr_t GLimp_SetMode( int mode, bool fullscreen, bool noborder )
 		glConfig.colorBits = bestColorBits;
 		glConfig.depthBits = depthBits;
 		glConfig.stencilBits = stencilBits;
-		glConfig2.glCoreProfile = bestProfile == coreProfile;
+
+		// Check if we have a core profile.
+		int profile;
+		glGetIntegerv( GL_CONTEXT_PROFILE_MASK, &profile );
+
+		glConfig2.glCoreProfile = profile == GL_CONTEXT_CORE_PROFILE_BIT;
+
+		if ( glConfig2.glCoreProfile != (bool) bestProfile )
+		{
+			logger.Warn( "Provided OpenGL %s profile is not the same as requested %s profile.", GLimp_getProfileName( (int) glConfig2.glCoreProfile ), GLimp_getProfileName( bestProfile ) );
+		}
+		else
+		{
+			logger.Debug( "Provided OpenGL %s profile.", GLimp_getProfileName( (int) glConfig2.glCoreProfile ) );
+		}
+
+		// Check if context is forward compatible.
+		int contextFlags;
+		glGetIntegerv( GL_CONTEXT_FLAGS, &contextFlags );
+
+		glConfig2.glForwardCompatibleContext = contextFlags & GL_CONTEXT_FLAG_FORWARD_COMPATIBLE_BIT;
+		if ( glConfig2.glForwardCompatibleContext )
+		{
+			Log::Debug( "Provided OpenGL context is forward compatible." );
+		}
+		else
+		{
+			Log::Debug( "Provided OpenGL context is not forward compatible." );
+		}
 
 		logger.Notice("Using %d Color bits, %d depth, %d stencil display.",
 			glConfig.colorBits, glConfig.depthBits, glConfig.stencilBits );

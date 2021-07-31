@@ -45,6 +45,7 @@ struct glconfig2_t
 	bool textureCompressionRGTCAvailable;
 
 	bool glCoreProfile;
+	bool glForwardCompatibleContext;
 
 	char glExtensionsString[ MAX_STRING_CHARS * 8 ];
 
